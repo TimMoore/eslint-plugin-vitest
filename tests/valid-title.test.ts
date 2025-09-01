@@ -672,6 +672,54 @@ ruleTester.run(RULE_NAME, rule, {
       output: 'it.skip("foo", function () {})',
       errors: [{ messageId: 'accidentalSpace', column: 9, line: 1 }],
     },
+    {
+      code: 'describe(" foo", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'describe("foo", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 10, line: 1 }],
+    },
+    {
+      code: 'describe.each()(" foo", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'describe.each()("foo", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 17, line: 1 }],
+    },
+    {
+      code: 'describe.only.each()(" foo", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'describe.only.each()("foo", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 22, line: 1 }],
+    },
+    {
+      code: 'describe(" foo foe fum", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'describe("foo foe fum", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 10, line: 1 }],
+    },
+    {
+      code: 'describe("foo foe fum ", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'describe("foo foe fum", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 10, line: 1 }],
+    },
+    {
+      code: 'it.skip(" foo", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'it.skip("foo", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 9, line: 1 }],
+    },
+    {
+      code: 'fit("foo ", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'fit("foo", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 5, line: 1 }],
+    },
+    {
+      code: 'it.skip("foo ", function () {})',
+      settings: { vitest: { typecheck: true } },
+      output: 'it.skip("foo", function () {})',
+      errors: [{ messageId: 'accidentalSpace', column: 9, line: 1 }],
+    },
   ],
 })
 
