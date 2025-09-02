@@ -1,9 +1,4 @@
-import {
-  AST_NODE_TYPES,
-  ESLintUtils,
-  JSONSchema,
-  TSESTree,
-} from '@typescript-eslint/utils'
+import { AST_NODE_TYPES, JSONSchema, TSESTree } from '@typescript-eslint/utils'
 import {
   createEslintRule,
   getStringValue,
@@ -11,12 +6,7 @@ import {
   StringNode,
 } from '../utils'
 import { parseVitestFnCall } from '../utils/parse-vitest-fn-call'
-import {
-  DescribeAlias,
-  isClassOrFunctionType,
-  TestCaseName,
-} from '../utils/types'
-import ts from 'typescript'
+import { DescribeAlias, TestCaseName } from '../utils/types'
 import { parsePluginSettings } from '../utils/parse-plugin-settings'
 
 export const RULE_NAME = 'valid-title'
@@ -76,10 +66,6 @@ const compileMatcherPattern = (
     : [matcherMaybeWithMessage]
 
   return [new RegExp(matcher, 'u'), message]
-}
-
-function isStringLikeType(type: ts.Type): boolean {
-  return !!(type.flags & ts.TypeFlags.StringLike)
 }
 
 const compileMatcherPatterns = (
@@ -244,21 +230,6 @@ export default createEslintRule<Options, MESSAGE_IDS>({
 
         const [argument] = node.arguments
 
-        if (settings.typecheck) {
-          const services = ESLintUtils.getParserServices(context)
-
-          const type = services.getTypeAtLocation(argument)
-
-          if (isClassOrFunctionType(type)) return
-
-          if (isStringLikeType(type)) {
-            if (isStringNode(argument) && !getStringValue(argument)) {
-              reportEmptyTitle(node)
-            }
-            return
-          }
-        }
-
         if (
           !argument ||
           (allowArguments && argument.type === AST_NODE_TYPES.Identifier)
@@ -266,6 +237,8 @@ export default createEslintRule<Options, MESSAGE_IDS>({
           return
 
         if (!isStringNode(argument)) {
+          if (settings.typecheck) return
+
           if (
             argument.type === AST_NODE_TYPES.BinaryExpression &&
             doesBinaryExpressionContainStringNode(argument)
